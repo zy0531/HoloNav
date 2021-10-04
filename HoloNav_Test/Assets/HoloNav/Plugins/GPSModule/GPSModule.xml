@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GPSModule</name>
+    </assembly>
+    <members>
+        <member name="T:VRR.GPSModule.Flags">
+            <summary>
+            States provided by the GPS Module.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.Flags.None">
+            <summary>
+            Empty state, all flags are off.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.Flags.ReliableCompass">
+            <summary>
+            The IMU is calibrated and values are considered reliable.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.Flags.GPSLock">
+            <summary>
+            The GPS has acquired coordinates.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.Flags.GPSReady">
+            <summary>
+            The GPS is now providing coordinates that are considered accurate.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.Flags.LocationUpdated">
+            <summary>
+            Have the GPS coordinates been updated in this data packet.
+            </summary>
+        </member>
+        <member name="T:VRR.GPSModule.ModuleData">
+            <summary>
+            Data packet reported from the GPS module.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Latitude">
+            <summary>
+            Latitude reported by the GPS in degrees.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Longitude">
+            <summary>
+            Longitude reported by the GPS in degrees.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Altitude">
+            <summary>
+            Altitude reported by the GPS in meters.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Speed">
+            <summary>
+            Speed reported by the GPS in meters per second.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Satellites">
+            <summary>
+            Number of satellites reported by the GPS.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Bearing">
+            <summary>
+            Bearing reported by the IMU measured in degrees
+            from magnetic North.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Pitch">
+            <summary>
+            Pitch reported by the IMU measured in degrees.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Roll">
+            <summary>
+            Roll reported by the IMU measured in degrees.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Reliable">
+            <summary>
+            IMU reliability state based on calibration.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Locked">
+            <summary>
+            GPS lock state.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.Ready">
+            <summary>
+            GPS ready state.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.ModuleData.LocationUpdated">
+            <summary>
+            Indicates that the GPS position has updated.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.ModuleData.ToString">
+            <summary>
+            Obtains a string value of all the contained data that is used
+            primarily for debugging purposes.
+            </summary>
+            <returns>A formatted string containing all the module data.</returns>
+        </member>
+        <member name="F:VRR.GPSModule.Serializer.MessageSize">
+            <summary>
+            Message size in bytes.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.Serializer.GetBytes(System.Byte[],System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Get a sub byte array from another.
+            </summary>
+            <param name="data"></param>
+            <param name="startIndex"></param>
+            <param name="length"></param>
+            <param name="reverse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VRR.GPSModule.Serializer.Serialize(VRR.GPSModule.ModuleData)">
+            <summary>
+            Serializes module data into the binary format used by
+            the GPS module.
+            </summary>
+            <param name="data">Data to be serialized.</param>
+            <returns>A byte array containing the serialized module data.</returns>
+        </member>
+        <member name="M:VRR.GPSModule.Serializer.Deserialize(System.Byte[])">
+            <summary>
+            Deserializes the binary module data.
+            </summary>
+            <param name="data">A byte array containing the serialized data.</param>
+            <returns>ModuleData with the deserialized values.</returns>
+        </member>
+        <member name="T:VRR.GPSModule.SerializerException">
+            <summary>
+            An exception that occurs during the serialization process.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.SerializerException.#ctor(System.String)">
+            <summary>
+            Standard constructor with message.
+            </summary>
+            <param name="message">Message displayed with the exception.</param>
+        </member>
+    </members>
+</doc>
