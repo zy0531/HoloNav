@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
+  m_Name: Readme
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2800000, guid: e10a7dd2deaa2454084d2cb5333a76fe, type: 3}
+  title: HoloNav Developer Library
+  sections:
+  - heading: 'Getting Started'
+    text: "This library includes assets to get started with the HoloNav. There are 
+      example scripts that show how to capture and deserialize incoming HoloNav data. 
+      Additionally, there is an example scene (HoloNav/Examples/Scenes/Example.unity)
+      with multiple implementations for a \"plug-n-play\" demonstration.
+      
+
+      This package was tested in Unity 2019.4.23f1 but should work in any version of
+      Unity that supports the .NET 4.x scripting runtime (Unity 2017.1 or above).
+      "
+    linkText: 
+    url: 
+  - heading: 'HoloNav Connection'
+    text: "The best way to connect your HoloNav to the HoloLens 2 is through a BLE
+      connection. The HoloNav also outputs data through its serial port as well. BLE
+      and Serial connection can be implemented in any way to fit existing systems.
+      This library includes classes for UWP BLE and USB serial connections.
+      
+
+      The VRR.GPSModule.Serializer class can deserialize a correctly formatted byte
+      array from any source and is used in conjunction with the chosen method of data
+      communication.
+
+
+      Note: The BLE connection library is only supported in HoloLens UWP build and
+      testing in-editor requires a USB serial connection.
+      "
+    linkText: 
+    url: 
+  - heading: 'Serial'
+    text: "When you connect your HoloNav via USB a new device will appear in the
+      Device Manager in your list of COM ports. You must take note of which port is
+      associated with the device (e.g. COM4).
+
+
+      The TelemetrySource class (HoloNav/Examples/Scripts/TelemetrySource.cs) includes
+      an example on how to use SerialConnection to read and process messages from the
+      HoloNav. Modify the parameters in the example scene of the Telemetry object
+      (Example -> HoloNav -> Telemetry) to match the correct serial port (e.g. COM4).
+      The baud rate for the HoloNav is set to 9600.
+      "
+    linkText: 
+    url: 
+  - heading: 'BLE'
+    text: "The HoloNav has preset BLE parameters that are used in a connection with the
+      device (see distributed readme for further detail). These are subject to change so
+      be sure to check with the included documentation for the latest parameters.
+
+
+      The TelemetrySource class (HoloNav/Examples/Scripts/TelemetrySource.cs) includes an
+      example on how to use BLEConnector to read and process messages from the HoloNav.
+      The scene comes pre-configured with the module's parameters. If needed you may modify
+      the parameters in the example scene of the Telemetry object (Example -> HoloNav ->
+      Telemetry) to match the BLE parameters.
+
+
+      If you deploy to the UWP platform you need to ensure the Bluetooth Capability is enabled in the Project Settings. 
+
+
+      If you need a custom solution for BLE just listen to the listed characteristic for any
+      updates and process each message accordingly.
+
+
+      Note: The UWP BLE library that is included only supports a UWP build and does not
+      function in-editor.
+      "
+    linkText: 
+    url: 
+  - heading: 'Map Display'
+    text: "The map display hooks into the Telemetry object and waits for incoming GPS
+      coordinates. Once it has a lock, it displays the current location using the MapQuest
+      API. A key is provided but not intended for deployment.
+      "
+    linkText: 
+    url:
+  - heading: 
+    text: 'To get your own API key visit the site below:'
+    linkText: MapQuest Developer
+    url: https://developer.mapquest.com/
+  loadedLayout: 1

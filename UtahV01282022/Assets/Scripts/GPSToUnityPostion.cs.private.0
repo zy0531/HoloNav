@@ -1,0 +1,435 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Networking;
+
+namespace VRR.HoloNav.Examples
+{
+    [Serializable]
+    public class MyArray
+    {
+        public double[] lat_Lon;
+    }
+
+
+    public class GPSToUnityPostion : MonoBehaviour
+    {
+        [SerializeField] TelemetrySource telemetry;
+
+        //private Vector2 OriginGPS;
+        private double OriginLat_Double;
+        private double OriginLon_Double;
+        //private Vector2 CurrentGPS;
+        private double CurrentLat_Double;
+        private double CurrentLon_Double;
+        //private List<double> GPS data for "Kalman Filter" estimation at the beginning
+        private List<double> LatList = new List<double>();
+        private List<double> LonList = new List<double>();
+
+        //get the elevation of Origin Position through API as a standard -> to normalize other cues' height
+        private double Elevation_Double;
+
+        private float CurrentBearing;
+        public float OriginBearing;
+        [SerializeField] private GameObject NodesParents;
+
+        private IEnumerator GPSIEnumerator;
+        private bool GPSReceived = false;
+        private bool GPSReceived_UnityEditor = true;
+        private bool BearingReceived = false;
+        private bool BearingReceived_UnityEditor = false;
+
+        /*The cooresponding GPS and Unity Coordinate*/
+        public Transform[] nodesCoordinate;
+        public MyArray[] nodesGPS; // nodesGPS[row].lat_Lon[column]
+
+        /*Recording Data*/
+        //RecordData recorder;
+
+        /*CompassBar*/
+        public QuantumTek.QuantumTravel.CompassBar compassBar;
+
+        /*Kalman Filter*/
+        [SerializeField] private bool gpsKalmanFilter = false;
+        [SerializeField] private int KalmanFilterDataCount = 0;
+
+
+        void Awake()
+        {
+            CurrentBearing = 0f;
+            OriginBearing = 0f;
+            /*Default Starting Point: FGH*/
+            OriginLat_Double = 36.144752;
+            OriginLon_Double = -86.803193;
+            //GPSEncoder.SetLocalOrigin(OriginGPS);
+            GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
+
+            Elevation_Double = 170;
+
+            nodesGPS[0].lat_Lon[0] = OriginLat_Double;
+            nodesGPS[0].lat_Lon[1] = OriginLon_Double;
+            nodesGPS[0].lat_Lon[2] = Elevation_Double;
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            telemetry.DataReceivedEvent += OnDataReceived;
+            /*set up Unity Coordinates according to GPS*/
+            if (GPSIEnumerator != null)
+                StopCoroutine(GPSIEnumerator);
+            GPSIEnumerator = SetCoordinates();
+            StartCoroutine(GPSIEnumerator);
+
+            /*Calibrate North*/
+            //StartCoroutine(AutoNorthCalibration());
+
+            /*Record HoloNav Data*/
+            StartCoroutine(RecordHoloNavData());
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            /*Only For Unity Editor Testing*/
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GPSReceived_UnityEditor = !GPSReceived_UnityEditor;
+                BearingReceived_UnityEditor = !BearingReceived_UnityEditor;
+            }
+        }
+        private IEnumerator SetCoordinates()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(0.1f);
+#if UNITY_EDITOR
+                if (GPSReceived_UnityEditor)
+                {
+                    Debug.Log("GPS ready");
+                    
+                    //Set Unity Coordinates of every Nodes
+                    SetNodesCoordinates();
+
+                    ////////////////////////////////////////////////////////////////////////////////
+                    
+                    ///*Set Origin*/
+                    //GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
+                    
+                    ///*Get elevation of the Origin GPS*/
+                    //StartCoroutine(GetElevation(OriginLat_Double, OriginLon_Double));
+
+                    ///*Set Unity Coordinates for all AR Cues*/
+                    //nodesGPS[0].lat_Lon[0] = OriginLat_Double;
+                    //nodesGPS[0].lat_Lon[1] = OriginLon_Double;                    
+                    
+                    //for (int i=1; i<nodesCoordinate.Length; i++)
+                    //{
+                    //    /*Set x and z*/
+                    //    double Lat = nodesGPS[i].lat_Lon[0];
+                    //    double Lon = nodesGPS[i].lat_Lon[1];
+                    //    nodesCoordinate[i].localPosition = GPSEncoder_Double.GPSToUCS_Double(Lat, Lon);
+                        
+                    //    /*Set y based on the elevation of start position*/
+                    //    var position = nodesCoordinate[i].localPosition;
+                    //    nodesCoordinate[i].localPosition = new Vector3(position.x, position.y + (float)(nodesGPS[i].lat_Lon[2] - Elevation_Double), position.z);
+                        
+                    //    Debug.Log(nodesCoordinate[i].localPosition);
+                    //}
+                    
+                    ////////////////////////////////////////////////////////////////////////////////
+                    
+                    Debug.Log("Objects Localized");
+                    break;
+                }
+#endif
+#if UNITY_WSA && ENABLE_WINMD_SUPPORT
+                if (GPSReceived)
+                {    
+                    if(!gpsKalmanFilter)
+                    {
+                        if(GPSReceived)                    
+                        { 
+                            OriginLat_Double = CurrentLat_Double;
+                            OriginLon_Double = CurrentLon_Double;
+                            
+                            //Set Unity Coordinates of every Nodes
+                            SetNodesCoordinates();
+
+                            //////////////////////////////////////////////////////////////////////////
+                            ///*Set Origin*/
+                            //GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
+                            
+                            ///*Get elevation of the Origin GPS*/
+                            //StartCoroutine(GetElevation(OriginLat_Double, OriginLon_Double));
+
+                            ///*Set Unity Coordinates for all AR Cues*/
+                            //nodesGPS[0].lat_Lon[0] = OriginLat_Double;
+                            //nodesGPS[0].lat_Lon[1] = OriginLon_Double;
+
+                            //for (int i = 1; i < nodesCoordinate.Length; i++)
+                            //{
+                            //    /*Set x and z*/                                
+                            //    double Lat = nodesGPS[i].lat_Lon[0];
+                            //    double Lon = nodesGPS[i].lat_Lon[1];
+                            //    nodesCoordinate[i].localPosition = GPSEncoder_Double.GPSToUCS_Double(Lat, Lon);
+                                
+                            //    /*Set y based on the elevation of start position*/
+                            //    var position = nodesCoordinate[i].localPosition;
+                            //    nodesCoordinate[i].localPosition = new Vector3(position.x, position.y + (float)(nodesGPS[i].lat_Lon[2] - Elevation_Double), position.z);
+                        
+                            //    Debug.Log(nodesCoordinate[i].localPosition);
+                            //}
+                            //////////////////////////////////////////////////////////////////////////
+                            
+                            break;
+                        }
+                    }
+
+                    //initialize the scene until already collecting the Kalman Filter Data
+                    if(gpsKalmanFilter)
+                    {
+                        if(LatList.Count>=KalmanFilterDataCount && LonList.Count >= KalmanFilterDataCount)                    
+                        {
+                            OriginLat_Double = KalmanFilter(LatList);
+                            OriginLon_Double = KalmanFilter(LonList);
+
+                            //record kalman filter prediction
+                            RecordData.SaveData("KalmanPrediction.txt", System.DateTime.UtcNow.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") + "," + OriginLat_Double.ToString() + "," + OriginLon_Double.ToString() + "," + CurrentBearing.ToString() + "\n");                
+
+                            //Set Unity Coordinates of every Nodes
+                            SetNodesCoordinates();
+
+                            //////////////////////////////////////////////////////////////////////////
+                            ///*Set Origin*/
+                            //GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
+                            
+                            ///*Get elevation of the Origin GPS*/
+                            //StartCoroutine(GetElevation(OriginLat_Double, OriginLon_Double));
+
+                            ///*Set Unity Coordinates for all AR Cues*/
+                            //nodesGPS[0].lat_Lon[0] = OriginLat_Double;
+                            //nodesGPS[0].lat_Lon[1] = OriginLon_Double;
+
+                            //for (int i = 1; i < nodesCoordinate.Length; i++)
+                            //{
+                            //    /*Set x and z*/                                
+                            //    double Lat = nodesGPS[i].lat_Lon[0];
+                            //    double Lon = nodesGPS[i].lat_Lon[1];
+                            //    nodesCoordinate[i].localPosition = GPSEncoder_Double.GPSToUCS_Double(Lat, Lon);
+                                
+                            //    /*Set y based on the elevation of start position*/
+                            //    var position = nodesCoordinate[i].localPosition;
+                            //    nodesCoordinate[i].localPosition = new Vector3(position.x, position.y + (float)(nodesGPS[i].lat_Lon[2] - Elevation_Double), position.z);
+                        
+                            //    Debug.Log(nodesCoordinate[i].localPosition);
+                            //}
+                            //////////////////////////////////////////////////////////////////////////
+
+                            break;
+                        } 
+                    }                       
+                }
+#endif
+            }
+        }
+
+        private void SetNodesCoordinates()
+        {
+            /*Set Origin*/
+            GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
+
+            /*Get elevation of the Origin GPS through API online*/
+            StartCoroutine(GetElevation(OriginLat_Double, OriginLon_Double));
+
+            /*Set Unity Coordinates for all AR Cues*/
+            nodesGPS[0].lat_Lon[0] = OriginLat_Double;
+            nodesGPS[0].lat_Lon[1] = OriginLon_Double;
+
+            for (int i = 1; i < nodesCoordinate.Length; i++)
+            {
+                /*Set x and z*/
+                double Lat = nodesGPS[i].lat_Lon[0];
+                double Lon = nodesGPS[i].lat_Lon[1];
+                nodesCoordinate[i].localPosition = GPSEncoder_Double.GPSToUCS_Double(Lat, Lon);
+
+                /*Set y based on the elevation of start position*/
+                var position = nodesCoordinate[i].localPosition;
+                nodesCoordinate[i].localPosition = new Vector3(position.x, position.y + (float)(nodesGPS[i].lat_Lon[2] - Elevation_Double), position.z);
+
+                Debug.Log(nodesCoordinate[i].localPosition);
+            }
+        }
+
+
+        private IEnumerator RecordHoloNavData()
+        {
+            while (true)
+            {
+                //yield return null;
+                yield return new WaitForSeconds(0.5f);
+                /*if (GPSReceived)
+                {
+                    RecordData.SaveData("HoloNavData.txt", System.DateTime.UtcNow.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") + "," + CurrentLat_Double.ToString() + "," + CurrentLon_Double.ToString() + "," + CurrentBearing.ToString()+"\n");
+                }*/
+            }
+        }
+
+        public IEnumerator AutoNorthCalibration()
+        {
+            while (true)
+            {
+                yield return null;
+                if (BearingReceived || BearingReceived_UnityEditor)
+                {
+                    if (compassBar.CompassNorthAlign)
+                    {
+                        NorthCalibration();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void NorthCalibration()
+        {
+            OriginBearing = CurrentBearing;
+            NodesParents.transform.Rotate(0.0f, -OriginBearing, 0.0f, Space.World);
+        }
+
+        public void NorthCalibrationforCompassBar()
+        {
+            //notice CompassBar.OriginBearing --> to change its rotation according to the Bearing Data. (no NEED for calling "NorthCalibrate")
+            OriginBearing = CurrentBearing;
+        }
+
+
+
+        void OnDataReceived(object sender, TelemetryReceievedEventArgs args)
+        {
+
+            CurrentBearing = args.Data.Bearing;
+            BearingReceived = true;
+
+            // Verify position lock.
+            if (args.Data.Locked)
+            {
+                if (!GPSReceived)
+                    GPSReceived = true;
+
+                CurrentLat_Double = args.Data.Latitude;
+                CurrentLon_Double = args.Data.Longitude;
+
+                // GetElevation(args.Data.Altitude);
+
+                //record data
+                RecordData.SaveData("HoloNavData.txt", System.DateTime.UtcNow.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") + "," + CurrentLat_Double.ToString() + "," + CurrentLon_Double.ToString() + "," + CurrentBearing.ToString() + "\n");
+
+                //create Kalman Filter Data
+                if (gpsKalmanFilter)
+                {
+                    if (LatList.Count <= KalmanFilterDataCount)
+                        LatList.Add(CurrentLat_Double);
+                    if (LonList.Count <= KalmanFilterDataCount)
+                        LonList.Add(CurrentLon_Double);
+                }
+
+            }
+            else
+            {
+                if (GPSReceived)
+                    GPSReceived = false;
+            }
+        }
+
+
+        public Tuple<double, double> KalmanFilter_1D(double x, double P, double meas, double R)
+        {
+            double Q = 10e-5; //Q: Process Noise Covariance
+            double A = 1;
+            double H = 1;
+
+            double K = (P * H) / (H * P * H + R);
+            x = x + K * (meas - H * x);
+            P = (1 - K * H) * P;
+
+            x = A * x;
+            P = A * P * A + Q;
+
+            return Tuple.Create(x, P);
+        }
+
+        //return 1D "Latitude" /  1D "Longitude
+        public double KalmanFilter(List<double> data)
+        {
+            double x = data[0]; //x:state
+            double P = 1; //P: uncertainty covariance
+            double R = Math.Pow(10, 2); //10**2 //R: measurement noise
+            List<double> observed_x = data;
+            List<double> result = new List<double>();
+
+            for (int i = 0; i < observed_x.Count; i++)
+            {
+                (x, P) = KalmanFilter_1D(x, P, observed_x[i], R);
+                result.Add(x);
+            }
+
+            return x;
+        }
+
+
+        //read from HoloNav Kit
+        public void GetElevation(double Elevation_Double_Read)
+        {
+            Elevation_Double = Elevation_Double_Read;
+            return;
+        }
+
+
+        //get from API through the internet
+        public IEnumerator GetElevation(double Lat, double Lon)
+        {
+            var www = new UnityWebRequest("https://api.opentopodata.org/v1/ned10m?locations=" + Lat.ToString() + "," + Lon.ToString())
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
+            yield return www.SendWebRequest();
+            //if (www.isNetworkError || www.isHttpError)
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log("Network Error");
+                yield break;
+            }
+            LocationInfo Info = JsonUtility.FromJson<LocationInfo>(www.downloadHandler.text);
+            Elevation_Double = Info.results[0].elevation;
+            Debug.Log(Elevation_Double);
+        }
+
+
+        [Serializable]
+        public class LocationInfo
+        {
+            public List<Result> results;
+            public string status;
+        }
+
+        [Serializable]
+        public class Result
+        {
+            public string dataset;
+            public double elevation;
+            public Location location;
+            //public Location location;
+        }
+
+        [Serializable]
+        public class Location
+        {
+            public double lat;
+            public double lng;
+        }
+    }
+}
+

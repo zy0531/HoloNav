@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SerialConnection</name>
+    </assembly>
+    <members>
+        <member name="T:VRR.GPSModule.DataReceivedEventArgs">
+            <summary>
+            Event arguments for incoming serial data.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.DataReceivedEventArgs.#ctor(System.Byte[])">
+            <summary>
+            Default constructor for the data received.
+            </summary>
+            <param name="data">An array of bytes read from the serial port.</param>
+        </member>
+        <member name="P:VRR.GPSModule.DataReceivedEventArgs.Data">
+            <summary>
+            An array of bytes read from the serial port.
+            </summary>
+        </member>
+        <member name="T:VRR.GPSModule.SerialConnection">
+            <summary>
+            A serial connection that is designed to interact
+            with the GPS Module device.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.SerialConnection.DataReceivedEvent">
+            <summary>
+            Triggered when the serial connection successfully reads 
+            a data packet.
+            </summary>
+        </member>
+        <member name="F:VRR.GPSModule.SerialConnection.ConnectionClosedEvent">
+            <summary>
+            Triggered when the serial connection terminates for any 
+            reason.
+            </summary>
+        </member>
+        <member name="P:VRR.GPSModule.SerialConnection.Connected">
+            <summary>
+            Indicates if this instance is connected to the specified
+            serial port.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.SerialConnection.Configure(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Applies the specified settings to the serial connection
+            instance.
+            </summary>
+            <param name="port">Target serial port.</param>
+            <param name="baud">Speed of communication.</param>
+            <param name="readTimeout">Max read timeout.</param>
+            <param name="writeTimeout">Max write timeout.</param>
+        </member>
+        <member name="M:VRR.GPSModule.SerialConnection.Connect">
+            <summary>
+            Opens a connection with the specified settings.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.SerialConnection.Disconnect">
+            <summary>
+            Closes the serial connection.
+            </summary>
+        </member>
+        <member name="M:VRR.GPSModule.SerialConnection.GetPorts">
+            <summary>
+            Retrieves a list of available serial ports.
+            </summary>
+            <returns>A string array containing available serial ports.</returns>
+        </member>
+    </members>
+</doc>
