@@ -1,4 +1,4 @@
-# HoloNav_Test
+# HoloNav
 Seamlessly visualizing Augmented Reality (AR) cues in the real world in HoloLens 2 by giving GNSS (Lattitude, Longitude)
 
 ## Hardware
