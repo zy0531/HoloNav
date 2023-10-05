@@ -2,11 +2,11 @@
 Seamlessly visualizing Augmented Reality (AR) cues in the real world in HoloLens 2 by giving GNSS (Lattitude, Longitude)
 
 ## Hardware
-HoloLens 2
-HoloNav
+- HoloLens 2
+- HoloNav
 
 ## Software
-Developed in Unity 2020.3.14f1
+- Developed in Unity 2020.3.14f1
 
 ## Functions
 1. Receive GPS and IMU data from HoloNav via Bluetooth
