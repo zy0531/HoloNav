@@ -44,6 +44,7 @@ namespace VRR.HoloNav.Examples
         //get the elevation of Origin Position through API as a standard -> to normalize other cues' height
         private double Elevation_Double;
 
+        [Header("Set Bearing")]
         private float CurrentBearing;
         public float OriginBearing;
         [SerializeField] private GameObject NodesParents;
@@ -55,31 +56,37 @@ namespace VRR.HoloNav.Examples
         private bool BearingReceived_UnityEditor = false;
 
         /*The cooresponding GPS and Unity Coordinate*/
+        [Header("Set GPS")]
         public Transform[] nodesCoordinate;
         public MyArray[] nodesGPS; // nodesGPS[row].lat_Lon[column]
 
         /*Add/delete markers in real time & save GPS info*/
-        private List<List<string>> RealTimeGPS; 
+        [Header("Add/Delete Marker")]
         public GameObject RealTimeMarker; //Marker Prefab
         [SerializeField] Transform MarkersParent;
+        private List<List<string>> RealTimeGPS;
         private string FileName_RealTimeMarker = "RealTimeMarker.txt";
         public int markerId; //pass from MarkerID.id
         private int lineIndex; //calculate the line index to delete
         int NewID = -1; //incremented new id - add to the end of the file 
 
         /*Recording Data*/
+        [Header("Data Recording")]
         //RecordData recorder;
         private string FileName;
         [SerializeField] private TMP_InputField FileNameInputField;
 
         /*CompassBar*/
+        [Header("Compass")]
         public QuantumTek.QuantumTravel.CompassBar compassBar;
 
         /*Kalman Filter*/
+        [Header("Kalman Filter")]
         [SerializeField] private bool gpsKalmanFilter = false;
         [SerializeField] private int KalmanFilterDataCount = 0;
 
         /*Update the height of AR cues to appear at the eye height of users*/
+        [Header("Dynamic AR Cue Height")]
         [Tooltip("If updating the height of AR cues to appear at the eye height of users")]
         public bool UseEyeHeight;
         [Tooltip("The interval to check MainCamera height in seconds")]
@@ -92,12 +99,13 @@ namespace VRR.HoloNav.Examples
         {
             CurrentBearing = 0f;
             OriginBearing = 0f;
-            /*Default Starting Point: FGH*/
+            /*Default Starting Point: FGH at Vanderbilt*/
             OriginLat_Double = 36.144752;
             OriginLon_Double = -86.803193;
             //GPSEncoder.SetLocalOrigin(OriginGPS);
             GPSEncoder_Double.SetLocalOrigin(OriginLat_Double, OriginLon_Double);
 
+            //Default Elevation_Double in case no sensor data read in
             Elevation_Double = 170;
 
             nodesGPS[0].lat_Lon[0] = OriginLat_Double;

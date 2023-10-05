@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/HoloNav/Examples/Scenes/Example.unity
+    guid: 7ded4c4ed371ff740910243dc908e61c
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: b29192da5aa005b4c8d8a0b43b4f8681, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: a927093a8205c7f44a8385ba7224670e, type: 2}

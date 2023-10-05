@@ -11,6 +11,7 @@
 /UtahV01282022/[Mm]emoryCaptures/
 /UtahV01282022/[Aa]PP/
 /UtahV01282022/[Aa]PP2/
+/UtahV01282022/[Aa]PP2023/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/UtahV01282022/[Aa]ssets/**/*.meta

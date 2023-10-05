@@ -144,8 +144,11 @@ PlayerSettings:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 5474690581604931664, guid: a927093a8205c7f44a8385ba7224670e, type: 2}
   - {fileID: -133802274010315614, guid: b29192da5aa005b4c8d8a0b43b4f8681, type: 2}
+  - {fileID: 0}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -620,11 +623,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Template3D
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: Assets\WSATestCertificate.pfx
-  metroCertificatePassword: 
+  metroCertificatePath: Assets/WSATestCertificate.pfx
+  metroCertificatePassword: '><>?;<'
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany
-  metroCertificateNotAfter: 0095da8149b3d801
+  metroCertificateNotAfter: 0046267373bcda01
   metroApplicationDescription: Template_3D
   wsaImages: {}
   metroTileShortName: HoloNav_Test
