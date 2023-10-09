@@ -27,3 +27,6 @@ https://www.youtube.com/watch?v=fqjOO3_votQ
 
 ### Input and Interaction
 <img src="https://github.com/zy0531/HoloNav/blob/main/Figures/InputInteraction.PNG?raw=true" width="90%" height="90%">
+
+### Future Functions
+<img src="https://github.com/zy0531/HoloNav/blob/main/Figures/MRMap.gif?raw=true" width="50%" height="50%">
