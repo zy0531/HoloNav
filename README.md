@@ -1,5 +1,5 @@
 # HoloNav
-Seamlessly visualizing Augmented Reality (AR) cues in the real world in HoloLens 2 by giving GNSS (Lattitude, Longitude)
+Seamlessly anchoring & visualizing Augmented Reality (AR) cues in the real world in HoloLens 2 by giving GNSS (Lattitude, Longitude). 
 
 ## Demo Video
 https://www.youtube.com/watch?v=fqjOO3_votQ
